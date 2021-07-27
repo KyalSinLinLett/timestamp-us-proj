@@ -27,26 +27,29 @@ app.get("/api/hello", function (req, res) {
 // request to /api/:date? with a valid date 
 // -> { unix: milliseconds, utc: "Fri, 25 Dec 2015 00:00:00 GMT" }
 app.get('/api/:date?', (req, res) => {
-  var dateParam = req.params.date
+  var dateString = req.params.date
 
-  if (!dateParam) {
+  console.log(dateString)
+
+  if (!dateString) {
     res.json({ unix: new Date().getTime(), utc: new Date().toUTCString() })
   }
 
-  if (dateParam.length >= 13) 
-    dateParam = parseInt(dateParam)
+  var allNum = true
+  for (var i = 0; i < dateString.length; i++) {
+    allNum = Number.isInteger(parseInt(dateString[i]))
+    if(!allNum) break
+  }
 
-  var date = new Date(dateParam)
+  dateString = allNum ? parseInt(dateString) : dateString
+
+  var date = new Date(dateString)
 
   if (date.toUTCString() != "Invalid Date") {
     res.json({ unix: date.getTime(), utc: date.toUTCString() })
   }
   res.json({ error : "Invalid Date" })
 })
-
-
-
-
 
 
 // listen for requests :)
